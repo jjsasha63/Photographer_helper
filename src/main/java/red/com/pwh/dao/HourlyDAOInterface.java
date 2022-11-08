@@ -22,7 +22,7 @@ public interface HourlyDAOInterface {
 
     String get_weather(LocalDateTime time);
 
-    Integer get_weatherCode(LocalDate date);
+    Integer get_weatherCode(LocalDateTime time);
 
     Integer get_cloudcover(LocalDateTime time);
 

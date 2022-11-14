@@ -44,6 +44,11 @@ public class DailyDAO implements DailyDAOInterface {
         dailyWeather = get(url);
     }
 
+    @Override
+    public List<LocalDate> date_list() {
+        return dailyWeather.getTime();
+    }
+
 
     private int day_index(LocalDate date){
         return dailyWeather.getTime().indexOf(date);
@@ -83,6 +88,7 @@ public class DailyDAO implements DailyDAOInterface {
     public Double get_windspeed(LocalDate date){
         return dailyWeather.getWindspeed_10m_max().get(day_index(date));
     }
+
 
     @Override
     public String get_weather(LocalDate date) {

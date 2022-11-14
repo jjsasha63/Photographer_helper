@@ -54,6 +54,12 @@ public class HourlyDAO implements HourlyDAOInterface {
     }
 
     @Override
+    public void load_week(Double latitude, Double longitude, String timezone) throws IOException {
+        URL url = new URL(apiLink + latitudeLink + latitude + longitudeLink + longitude + hourlyLink + timezoneLink + timezone);
+        hourlyWeather = get(url);
+    }
+
+    @Override
     public List<LocalDateTime> get_timeList() {
         return hourlyWeather.getTime();
     }

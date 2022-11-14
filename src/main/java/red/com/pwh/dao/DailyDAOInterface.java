@@ -11,6 +11,8 @@ public interface DailyDAOInterface {
 
     void load_week(Double latitude, Double longitude, String timezone) throws IOException;
 
+    List<LocalDate> date_list();
+
     Double get_max_temp(LocalDate date);
 
     Double get_min_temp(LocalDate date);

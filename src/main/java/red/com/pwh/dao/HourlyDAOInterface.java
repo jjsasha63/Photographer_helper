@@ -12,6 +12,8 @@ public interface HourlyDAOInterface {
 
     void load_day(Double latitude, Double longitude, String timezone, LocalDate date) throws IOException;
 
+    void load_week(Double latitude, Double longitude, String timezone) throws IOException;
+
     List<LocalDateTime> get_timeList();
 
     HourlyWeather get_weather();

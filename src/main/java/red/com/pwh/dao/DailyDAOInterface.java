@@ -17,7 +17,7 @@ public interface DailyDAOInterface {
 
     Double get_min_temp(LocalDate date);
 
-    LocalTime get_sunet(LocalDate date);
+    LocalTime get_sunset(LocalDate date);
 
     LocalTime get_sunrise(LocalDate date);
 

@@ -65,7 +65,7 @@ public class DailyDAO implements DailyDAOInterface {
     }
 
     @Override
-    public LocalTime get_sunet(LocalDate date){
+    public LocalTime get_sunset(LocalDate date){
         return dailyWeather.getSunset().get(day_index(date)).toLocalTime();
     }
 

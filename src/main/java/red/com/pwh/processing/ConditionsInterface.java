@@ -1,12 +1,9 @@
 package red.com.pwh.processing;
 
-import red.com.pwh.dao.DailyDAO;
-import red.com.pwh.dao.DailyDAOInterface;
 import red.com.pwh.dao.HourlyDAOInterface;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 public interface ConditionsInterface {
 

@@ -2,11 +2,14 @@ package red.com.pwh.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import red.com.pwh.dao.DailyDAOInterface;
 import red.com.pwh.dao.HourlyDAOInterface;
+import red.com.pwh.entity.DailyWeather;
 import red.com.pwh.processing.ConditionsInterface;
 import red.com.pwh.processing.LocationInterface;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +17,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class PHService implements PHServiceInterface{
 
     private DailyDAOInterface dailyDAO;
@@ -32,28 +36,43 @@ public class PHService implements PHServiceInterface{
 
     private List<LocalDate> dates;
 
+    private String loc;
+
+    public PHService(){}
     @Autowired
     public PHService(LocationInterface location,DailyDAOInterface dailyDAO,HourlyDAOInterface hourlyDAO,ConditionsInterface conditions) throws IOException {
         this.location = location;
         this.dailyDAO = dailyDAO;
         this.hourlyDAO = hourlyDAO;
         this.conditions = conditions;
+    }
+
+    @PostConstruct
+    public void def() throws IOException {
+        latitude = 51.760932;
+        longitude = 19.460718;
+        timezone = "Europe/Warsaw";
+        loc = "Lodz";
         load();
     }
 
     @Override
-    public void set_location(String loc) throws JsonProcessingException {
+    public void set_location(String loc) throws IOException {
         Double[] loc_long = location.get_param(loc);
         latitude = loc_long[0];
         longitude = loc_long[1];
         timezone = location.get_timezone(loc);
+        this.loc = loc;
+        load();
     }
 
     @Override
-    public void set_location(Double latitude, Double longitude) throws JsonProcessingException {
+    public void set_location(Double latitude, Double longitude) throws IOException {
         this.latitude = latitude;
         this.longitude = longitude;
         timezone = location.get_timezone(latitude,longitude);
+        this.loc = location.get_address(latitude,longitude);
+        load();
     }
 
     @Override
@@ -113,6 +132,22 @@ public class PHService implements PHServiceInterface{
     }
 
     @Override
+    public Integer get_weather_code(LocalDate date) {
+        return dailyDAO.get_weatherCode(date);
+    }
+
+    @Override
+    public Integer get_weather_code(LocalDateTime time) {
+        return hourlyDAO.get_weatherCode(time);
+    }
+
+    @Override
+    public Boolean is_night(LocalDateTime time) {
+        return time.isAfter(conditions.get_evening_blue_hour_end(dailyDAO.get_sunset(time.toLocalDate())).atDate(time.toLocalDate()))
+                || time.isBefore(conditions.get_morning_blue_hour_start(dailyDAO.get_sunrise(time.toLocalDate())).atDate(time.toLocalDate()));
+    }
+
+    @Override
     public List<String> get_weatherList(LocalDate date) throws IOException {
         List<String> weather = new ArrayList<>();
         load(date);
@@ -122,6 +157,12 @@ public class PHService implements PHServiceInterface{
         load();
         return weather;
     }
+
+    @Override
+    public DailyWeather get_week() {
+        return dailyDAO.get_week();
+    }
+
 
     @Override
     public List<Double> get_temp(LocalDate date) throws IOException {
@@ -167,10 +208,6 @@ public class PHService implements PHServiceInterface{
         return cloud;
     }
 
-    @Override
-    public LocalDate get_bestDay() {
-        return conditions.best_date_overall(hourlyDAO);
-    }
 
     @Override
     public LocalTime[] get_goldenHours(LocalDate date) {
@@ -193,19 +230,76 @@ public class PHService implements PHServiceInterface{
     }
 
     @Override
-    public LocalDate get_bestDay_optional(String ind,LocalDate date) {
-        LocalDate c_date = date;
-        switch (ind){
-            case "morning" -> c_date = conditions.best_date_morning(hourlyDAO,dailyDAO.get_sunrise(date));
-            case "evening" -> c_date = conditions.best_date_evening(hourlyDAO,dailyDAO.get_sunset(date));
-            case "e_night" -> c_date = conditions.best_date_early_night(hourlyDAO,dailyDAO.get_sunset(date));
-            case "l_night" -> c_date = conditions.best_date_late_night(hourlyDAO,dailyDAO.get_sunrise(date));
-        }
-        return c_date;
+    public LocalDate get_bestDay_optional(String ind) {
+        return switch (ind){
+            case "morning" -> conditions.best_date_morning();
+            case "evening" -> conditions.best_date_evening();
+            case "e_night" -> conditions.best_date_early_night();
+            case "l_night" -> conditions.best_date_late_night();
+            default -> conditions.best_date_overall();
+        };
     }
 
     @Override
-    public String get_address() throws JsonProcessingException {
-        return location.get_address(latitude,longitude);
+    public List<List<String>> get_hour_weather(LocalDate date) {
+        List<List<String>> param = new ArrayList<>();
+        for(LocalDateTime time:hourlyDAO.get_timeList_day(date)){
+            List<String> params = new ArrayList<>();
+            params.add(time.toLocalTime().toString());
+            params.add(hourlyDAO.get_weather(time));
+            params.add(hourlyDAO.get_temperature(time).toString());
+            params.add(hourlyDAO.get_cloudcover(time).toString());
+            params.add(hourlyDAO.get_precipitation(time).toString());
+            params.add(hourlyDAO.get_windspeed(time).toString());
+            param.add(params);
+        }
+        return param;
     }
+
+    @Override
+    public List<List<String>> get_day_weather() {
+        List<List<String>> params = new ArrayList<>();
+        for(int i=0;i<7;i++) {
+            LocalDate date = dailyDAO.date_list().get(i);
+            List<String> param = new ArrayList<>();
+            param.add(date.getDayOfWeek().toString());
+            param.add(dailyDAO.get_weather(date));
+            param.add(dailyDAO.get_max_temp(date).toString());
+            param.add(dailyDAO.get_min_temp(date).toString());
+            param.add(dailyDAO.get_precipitation_sum(date).toString());
+            param.add(dailyDAO.get_precipitation_hours(date).toString());
+            param.add(dailyDAO.get_windspeed(date).toString());
+            param.add(dailyDAO.get_sunrise(date).toString());
+            param.add(dailyDAO.get_sunset(date).toString());
+            params.add(param);
+        }
+        return params;
+    }
+
+    @Override
+    public List<String> get_bestDay_list() {
+        return new ArrayList<>(){{
+           add(conditions.best_date_overall().getDayOfWeek().toString());
+           add(conditions.best_date_morning().getDayOfWeek().toString());
+           add(conditions.best_date_evening().getDayOfWeek().toString());
+           add(conditions.best_date_early_night().getDayOfWeek().toString());
+           add(conditions.best_date_late_night().getDayOfWeek().toString());
+        }};
+    }
+
+
+    @Override
+    public String get_address() throws IOException {
+        return location.get_address(loc);
+    }
+
+    @Override
+    public LocalDate reverse_date(String day) {
+        for(LocalDate date:dailyDAO.date_list()){
+            if(date.getDayOfWeek().toString().equals(day)) return date;
+        }
+        return LocalDate.now();
+    }
+
+
 }

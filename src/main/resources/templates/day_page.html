@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<hr>
+<p th:text="*{day}"></p>
+
+<table>
+    <tr th:each="wth: ${weather}">
+        <td th:each="opt: ${wth}">
+            <ol th:text="${opt}"></ol>
+        </td>
+    </tr>
+</table>
+
+<form>
+    <tr th:each="gld: ${golden}">
+        <td th:text="${gld}"></td>
+    </tr>
+    <tr th:each="bl: ${blue}">
+        <td th:text="${bl}"></td>
+    </tr>
+</form>
+<hr/>
+</body>
+</html>

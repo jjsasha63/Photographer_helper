@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Main page</title>
+</head>
+<body>
+<hr>
+<p th:text="'Address ' + ${address}" />
+<table>
+    <tr th:each="wth: ${weather}" >
+        <td>
+            <a th:href="@{daily(day=${wth[0]})}">Button</a>
+        </td>
+        <td th:each="opt: ${wth}">
+            <ol th:text="${opt}"></ol>
+        </td>
+    </tr>
+</table>
+<form th:each="best: ${best_day}">
+    <tr th:each="day: ${best}">
+        <ol th:text="${day}"></ol>
+    </tr>
+</form>
+<hr/>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package red.com.pwh.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import red.com.pwh.entity.DailyWeather;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -10,9 +11,10 @@ import java.util.List;
 
 public interface PHServiceInterface {
 
-    void set_location(String loc) throws JsonProcessingException;
+    void set_location(String loc) throws IOException;
 
-    void set_location(Double latitude, Double longitude) throws JsonProcessingException;
+
+    void set_location(Double latitude, Double longitude) throws IOException;
 
     Double get_latitude();
 
@@ -32,7 +34,16 @@ public interface PHServiceInterface {
 
     String get_weather(LocalDate date);
 
+    Integer get_weather_code(LocalDate date);
+
+    Integer get_weather_code(LocalDateTime time);
+
+    Boolean is_night(LocalDateTime time);
+
     List<String> get_weatherList(LocalDate timedate) throws IOException;
+
+    DailyWeather get_week();
+
 
     List<Double> get_temp(LocalDate date) throws IOException;
 
@@ -42,16 +53,21 @@ public interface PHServiceInterface {
 
     List<Integer> get_cloud(LocalDate date) throws IOException;
 
-    LocalDate get_bestDay();
 
     LocalTime[] get_goldenHours(LocalDate date);
 
     LocalTime[] get_blueHours(LocalDate date);
 
-    LocalDate get_bestDay_optional(String ind, LocalDate date);
+    LocalDate get_bestDay_optional(String ind);
 
-    String get_address() throws JsonProcessingException;
+    List<List<String>> get_day_weather();
 
+    List<List<String>> get_hour_weather(LocalDate date);
+
+    List<String> get_bestDay_list();
+    String get_address() throws IOException;
+
+    LocalDate reverse_date(String day);
 
 
 }

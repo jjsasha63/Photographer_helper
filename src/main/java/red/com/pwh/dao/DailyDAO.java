@@ -1,16 +1,22 @@
 package red.com.pwh.dao;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 import red.com.pwh.entity.DailyWeather;
 import red.com.pwh.entity.Weather;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class DailyDAO implements DailyDAOInterface {
 
     @Value("${weather.api}")
@@ -33,15 +39,45 @@ public class DailyDAO implements DailyDAOInterface {
     private final Weather weather = new Weather();
 
 
-    private static DailyWeather get(URL url) throws IOException {
+    private void get(URL url) throws IOException {
+        dailyWeather = new DailyWeather();
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(url, DailyWeather.class);
+        List<LocalDate> time =new ArrayList<>();
+        List<Integer> weathercode=new ArrayList<>();
+        List<Double> temperature_2m_max=new ArrayList<>();
+        List<Double> temperature_2m_min=new ArrayList<>();
+        List<LocalDateTime> sunrise=new ArrayList<>();
+        List<LocalDateTime> sunset=new ArrayList<>();
+        List<Double> precipitation_sum=new ArrayList<>();
+        List<Double> precipitation_hours=new ArrayList<>();
+        List<Double> windspeed_10m_max=new ArrayList<>();
+        JsonNode jsonNode = mapper.readTree(url);
+
+            for(JsonNode j:jsonNode.get("daily").get("time")) time.add(LocalDate.parse(j.asText()));
+            for(JsonNode j:jsonNode.get("daily").get("sunrise")) sunrise.add(LocalDateTime.parse(j.asText()));
+            for(JsonNode j:jsonNode.get("daily").get("sunset")) sunset.add(LocalDateTime.parse(j.asText()));
+            for(JsonNode j:jsonNode.get("daily").get("weathercode")) weathercode.add(j.asInt());
+            for(JsonNode j:jsonNode.get("daily").get("temperature_2m_max")) temperature_2m_max.add(j.asDouble());
+            for(JsonNode j:jsonNode.get("daily").get("temperature_2m_min")) temperature_2m_min.add(j.asDouble());
+            for(JsonNode j:jsonNode.get("daily").get("precipitation_sum")) precipitation_sum.add(j.asDouble());
+            for(JsonNode j:jsonNode.get("daily").get("precipitation_hours")) precipitation_hours.add(j.asDouble());
+            for(JsonNode j:jsonNode.get("daily").get("windspeed_10m_max")) windspeed_10m_max.add(j.asDouble());
+
+            dailyWeather.setTime(time);
+            dailyWeather.setSunrise(sunrise);
+            dailyWeather.setSunset(sunset);
+            dailyWeather.setWeathercode(weathercode);
+            dailyWeather.setTemperature_2m_max(temperature_2m_max);
+            dailyWeather.setTemperature_2m_min(temperature_2m_min);
+            dailyWeather.setPrecipitation_sum(precipitation_sum);
+            dailyWeather.setPrecipitation_hours(precipitation_hours);
+            dailyWeather.setWindspeed_10m_max(windspeed_10m_max);
+
     }
 
     @Override
     public void load_week(Double latitude, Double longitude, String timezone) throws IOException {
-        URL url = new URL(apiLink + latitudeLink + latitude + longitudeLink + longitude + dailyLink + timezoneLink + timezone);
-        dailyWeather = get(url);
+        get(new URL(apiLink + latitudeLink + latitude + longitudeLink + longitude + dailyLink + timezoneLink + timezone));
     }
 
     @Override
@@ -99,6 +135,7 @@ public class DailyDAO implements DailyDAOInterface {
     public Integer get_weatherCode(LocalDate date) {
         return dailyWeather.getWeathercode().get(day_index(date));
     }
+
 
     @Override
     public DailyWeather get_week(){

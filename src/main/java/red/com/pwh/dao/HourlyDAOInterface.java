@@ -16,6 +16,8 @@ public interface HourlyDAOInterface {
 
     List<LocalDateTime> get_timeList();
 
+    List<LocalDateTime> get_timeList_day(LocalDate date);
+
     HourlyWeather get_weather();
 
     Double get_temperature(LocalDateTime time);

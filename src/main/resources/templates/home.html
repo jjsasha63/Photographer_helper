@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Home page</title>
 </head>
 <body>
-Hello world
+<form action="#" th:action="@{location}" method="post">
+    <input type="text" th:value="${location}" name="location"/>
+    <button type="submit">Save</button>
+
+</form>
+
+
 </body>
 </html>

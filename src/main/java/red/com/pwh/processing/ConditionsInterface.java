@@ -20,14 +20,14 @@ public interface ConditionsInterface {
 
     LocalTime get_morning_blue_hour_end(LocalTime sunrise);
 
-    LocalDate best_date_overall(HourlyDAOInterface hourlyDAOInterface);
+    LocalDate best_date_overall();
 
 
-    LocalDate best_date_morning(HourlyDAOInterface hourlyDAOInterface, LocalTime sunrise);
+    LocalDate best_date_morning();
 
-    LocalDate best_date_evening(HourlyDAOInterface hourlyDAOInterface, LocalTime sunset);
+    LocalDate best_date_evening();
 
-    LocalDate best_date_early_night(HourlyDAOInterface hourlyDAOInterface, LocalTime sunset);
+    LocalDate best_date_early_night();
 
-    LocalDate best_date_late_night(HourlyDAOInterface hourlyDAOInterface, LocalTime sunrise);
+    LocalDate best_date_late_night();
 }

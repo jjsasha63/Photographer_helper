@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,8 +65,8 @@ public class HourlyDAO implements HourlyDAOInterface {
         hourlyWeather.setCloudcover(cloudcover);
         hourlyWeather.setPrecipitation(precipitation);
         hourlyWeather.setTemperature_2m(temperature_2m);
-        hourlyWeather.setWindspeed_10m(windspeed_10m);
         hourlyWeather.setWeathercode(weathercode);
+        hourlyWeather.setWindspeed_10m(windspeed_10m);
     }
 
     private int hour_index(LocalDateTime date){
@@ -90,12 +91,8 @@ public class HourlyDAO implements HourlyDAOInterface {
     @Override
     public List<LocalDateTime> get_timeList_day(LocalDate date) {
         List<LocalDateTime> times = new ArrayList<>();
-        List<LocalDateTime> time = hourlyWeather.getTime();
-        for(int i=0;i<7;i++){
-            LocalDate date1 = time.get(i*24).toLocalDate();
-            if(time.get(i*24).toLocalDate().equals(date)){
-                for(int j=i;j<i+24;j++) times.add(time.get(j));
-            }
+        for(int i = 0;i<24;i++){
+            times.add(date.atTime(i,0));
         }
         return times;
     }
@@ -123,6 +120,14 @@ public class HourlyDAO implements HourlyDAOInterface {
     @Override
     public Integer get_weatherCode(LocalDateTime time) {
         return hourlyWeather.getWeathercode().get(hour_index(time));
+    }
+
+    @Override
+    public List<Integer> get_weatherCode(LocalDate date) {
+        List<Integer> codes = new ArrayList<>();
+        for(LocalDateTime time: get_timeList_day(date))
+            codes.add(get_weatherCode(time));
+        return codes;
     }
 
     @Override

@@ -21,7 +21,7 @@
     }
 
     body {
-      background: #CAB6E5;
+      background: #00202D;;
       color: #65A5E1;
       font-family: BebasNeue1,sans-serif;
     }
@@ -105,8 +105,7 @@
   <article>
     <header>
       <h1 id="fittext1">
-        <th:block th:text="${err_code}" ></th:block>
-        <img th:src="@{/error.png}" style="height: 70%;width: 70%">
+        <img th:src="@{${'/'+ pic}}" style="height: 70%;width: 70%">
       </h1>
     </header>
     <p id="fittext2"><th:block th:text="${error}"></th:block> </p>

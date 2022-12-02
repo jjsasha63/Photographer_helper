@@ -54,6 +54,9 @@ public class PWHController {
         model.addAttribute("golden",phServiceInterface.get_goldenHours(date));
         model.addAttribute("blue",phServiceInterface.get_blueHours(date));
         model.addAttribute("day",day);
+        model.addAttribute("code",phServiceInterface.get_weather_code_hour(date));
+        model.addAttribute("period",phServiceInterface.is_night(date));
+        model.addAttribute("set_rise",phServiceInterface.get_sunset_sunrise(date));
         return "day_page";
     }
 }

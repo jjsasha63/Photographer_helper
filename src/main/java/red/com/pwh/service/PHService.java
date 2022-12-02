@@ -137,6 +137,11 @@ public class PHService implements PHServiceInterface{
     }
 
     @Override
+    public List<Integer> get_weather_code_hour(LocalDate date) {
+        return hourlyDAO.get_weatherCode(date);
+    }
+
+    @Override
     public List<Integer> get_weather_code() {
         return dailyDAO.get_weather_code();
     }
@@ -150,6 +155,14 @@ public class PHService implements PHServiceInterface{
     public Boolean is_night(LocalDateTime time) {
         return time.isAfter(conditions.get_evening_blue_hour_end(dailyDAO.get_sunset(time.toLocalDate())).atDate(time.toLocalDate()))
                 || time.isBefore(conditions.get_morning_blue_hour_start(dailyDAO.get_sunrise(time.toLocalDate())).atDate(time.toLocalDate()));
+    }
+
+    @Override
+    public List<Boolean> is_night(LocalDate date) {
+        List<Boolean> hours = new ArrayList<>();
+        for(LocalDateTime time: hourlyDAO.get_timeList_day(date))
+            hours.add(is_night(time));
+        return hours;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import red.com.pwh.exeption.LocationNotFoundException;
+import red.com.pwh.exeption.TerroristStateFoundException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -66,16 +67,19 @@ public class Location implements LocationInterface {
 
     @Override
     public Double[] get_param(String input) throws IOException {
-        URL url = new URL(apiF+key+query+input+lat_long);
+        URL url = new URL(apiF+key+query+input+lat_long+limit);
         ObjectMapper mapper = new ObjectMapper();
+        String country = new String();
         JsonNode jsonNode = mapper.readTree(url);
         Double latitude = null,longitude = null;
         for(JsonNode n: jsonNode.get("data")) {
-            if(n.get("latitude")!=null&&n.get("longitude")!=null) {
+            if(n.get("latitude")!=null&&n.get("longitude")!=null&&n.get("country")!=null) {
                 latitude = n.get("latitude").asDouble();
                 longitude = n.get("longitude").asDouble();
+                country = n.get("country").asText();
             }
         }
+        if(country.equals("Russia")) throw new TerroristStateFoundException("Only non-terrorist states are allowed");
         if(latitude == null||longitude == null) throw new LocationNotFoundException("The location wasn't found");
         return new Double[]{latitude,longitude};
     }

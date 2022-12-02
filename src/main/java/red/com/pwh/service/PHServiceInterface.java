@@ -35,12 +35,16 @@ public interface PHServiceInterface {
     String get_weather(LocalDate date);
 
     Integer get_weather_code(LocalDate date);
+    List<Integer> get_weather_code_hour(LocalDate date);
+
 
     List<Integer> get_weather_code();
 
     Integer get_weather_code(LocalDateTime time);
 
     Boolean is_night(LocalDateTime time);
+
+    List<Boolean> is_night(LocalDate date);
 
     List<String> get_weatherList(LocalDate timedate) throws IOException;
 

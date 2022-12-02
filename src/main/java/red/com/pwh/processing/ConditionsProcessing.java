@@ -47,7 +47,7 @@ public class ConditionsProcessing implements ConditionsInterface {
 
     @Override
     public LocalTime get_evening_blue_hour_start(LocalTime sunset) {
-        return sunset.plusHours(10);
+        return sunset.plusMinutes(10);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ConditionsProcessing implements ConditionsInterface {
 
     @Override
     public LocalTime get_evening_blue_hour_end(LocalTime sunset) {
-        return sunset.plusHours(30);
+        return sunset.plusMinutes(25);
     }
 
     @Override

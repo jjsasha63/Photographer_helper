@@ -28,6 +28,8 @@ public interface HourlyDAOInterface {
 
     Integer get_weatherCode(LocalDateTime time);
 
+    List<Integer> get_weatherCode(LocalDate date);
+
     Integer get_cloudcover(LocalDateTime time);
 
     Double get_windspeed(LocalDateTime time);

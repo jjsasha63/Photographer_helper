@@ -38,7 +38,12 @@ public class PWHController {
     public String show_weather(Model model) throws IOException {
         model.addAttribute("weather",phServiceInterface.get_day_weather());
         model.addAttribute("address",phServiceInterface.get_address());
-        model.addAttribute("best_day",phServiceInterface.get_bestDay_list());
+        model.addAttribute("code",phServiceInterface.get_weather_code());
+        model.addAttribute("best_day",phServiceInterface.get_bestDay_optional("").getDayOfWeek().toString());
+        model.addAttribute("best_morning",phServiceInterface.get_bestDay_optional("morning").getDayOfWeek().toString());
+        model.addAttribute("best_evening",phServiceInterface.get_bestDay_optional("evening").getDayOfWeek().toString());
+        model.addAttribute("best_e_night",phServiceInterface.get_bestDay_optional("e_night").getDayOfWeek().toString());
+        model.addAttribute("best_l_night",phServiceInterface.get_bestDay_optional("l_night").getDayOfWeek().toString());
         return "main";
     }
 

@@ -137,6 +137,11 @@ public class PHService implements PHServiceInterface{
     }
 
     @Override
+    public List<Integer> get_weather_code() {
+        return dailyDAO.get_weather_code();
+    }
+
+    @Override
     public Integer get_weather_code(LocalDateTime time) {
         return hourlyDAO.get_weatherCode(time);
     }

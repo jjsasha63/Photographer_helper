@@ -36,6 +36,8 @@ public interface PHServiceInterface {
 
     Integer get_weather_code(LocalDate date);
 
+    List<Integer> get_weather_code();
+
     Integer get_weather_code(LocalDateTime time);
 
     Boolean is_night(LocalDateTime time);

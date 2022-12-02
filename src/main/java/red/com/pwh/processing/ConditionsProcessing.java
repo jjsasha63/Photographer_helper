@@ -117,6 +117,8 @@ public class ConditionsProcessing implements ConditionsInterface {
             int[] hours = get_interval(arg,dt);
             hours[0] = Math.max(hours[0], 0);
             hours[1] = Math.max(hours[1], 1);
+            hours[0] = Math.min(hours[0], 23);
+            hours[1] = Math.min(hours[1], 23);
             LocalDateTime time = dt.atTime(LocalTime.of(hours[0],0));
             Double avg_tmp = 0.0,avg_prec = 0.0,avg_weather = 0.0,avg_cloud = 0.0,avg_wind = 0.0;
                 for (int i = 0; i < hours[1]; i++) {

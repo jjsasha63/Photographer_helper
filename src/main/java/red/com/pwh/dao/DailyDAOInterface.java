@@ -30,6 +30,7 @@ public interface DailyDAOInterface {
     String get_weather(LocalDate date);
 
     Integer get_weatherCode(LocalDate date);
+    List<Integer> get_weather_code();
 
     DailyWeather get_week();
 

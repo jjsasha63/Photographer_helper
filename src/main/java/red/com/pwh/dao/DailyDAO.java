@@ -136,6 +136,11 @@ public class DailyDAO implements DailyDAOInterface {
         return dailyWeather.getWeathercode().get(day_index(date));
     }
 
+    @Override
+    public List<Integer> get_weather_code() {
+        return dailyWeather.getWeathercode();
+    }
+
 
     @Override
     public DailyWeather get_week(){
